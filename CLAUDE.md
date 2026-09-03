@@ -20,7 +20,12 @@ For each portfolio company found:
 3. Try to find a screenshot-able view of their product UI (app screenshot,
    dashboard preview, product demo page, etc.) on their site and save it as
    an image file in `screenshots/` (filename: `<company-slug>.png`).
-4. Record a row in the output CSV.
+4. Try to identify one BD outreach contact at the company — ideally someone
+   in a Product, Design, or Founder/CEO role — via the company's own
+   website (team/about pages), a LinkedIn search, or as a last resort
+   WebSearch results. Leave the contact fields blank rather than guessing
+   if no reliable person can be found.
+5. Record a row in the output CSV.
 
 ## Output
 
@@ -28,7 +33,7 @@ Save results to `leads.csv` (append new findings on each run rather than
 overwriting past results, unless asked to start fresh) with these columns:
 
 ```
-Company, Website, Source, Has Designer (Y/N), Designer Titles Found, Screenshot Saved (Y/N), Notes, Date Found, Founded, Funded (Y/N), Funding Date, Design Quality, Product Image
+Company, Website, Source, Has Designer (Y/N), Designer Titles Found, Screenshot Saved (Y/N), Notes, Date Found, Founded, Funded (Y/N), Funding Date, Design Quality, Product Image, First Name, Last Name, Job Title, LinkedIn URL, Email, Country, City, Company Name
 ```
 
 - `Source`: which of the 4 sites the lead was found on.
@@ -56,6 +61,22 @@ Company, Website, Source, Has Designer (Y/N), Designer Titles Found, Screenshot 
   company's site — something that can be pasted straight into a browser to
   view the image itself (not a page URL, not a local file path). Leave
   blank if no direct image URL is available; never guess or construct one.
+- `First Name` / `Last Name`: name of one BD outreach contact at the
+  company — prefer someone in Product, Design, or a Founder/CEO role.
+  Leave both blank if no reliable person can be identified.
+- `Job Title`: that contact's job title, as found.
+- `LinkedIn URL`: that contact's LinkedIn profile URL, if found.
+- `Email`: that contact's email address, only if found directly (e.g.
+  listed on the company site) — never guess or construct an email from a
+  name/domain pattern.
+- `Country` / `City`: that contact's (or the company's HQ, if the
+  individual's location isn't known) location, if found.
+- `Company Name`: the company name again, for context alongside the
+  contact fields.
+- For all contact fields: leave blank rather than guessing if reliable
+  info isn't found. In `Notes`, flag whether the contact info came from
+  the company's own site, LinkedIn, or WebSearch, so confidence can be
+  judged at a glance.
 
 ## Tools / approach
 
