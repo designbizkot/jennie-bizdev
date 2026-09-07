@@ -59,7 +59,7 @@ Save results to `leads.csv` (append new rows on each run) with these
 columns:
 
 ```
-First Name, Last Name, Job Title, LinkedIn URL, Email, Company Name, Company Website, Country, City, Industry, Has Designer (Y/N), Designer Titles Found, Funded (Y/N), Source, Notes
+First Name, Last Name, Job Title, LinkedIn URL, Email, Company Name, Company Website, Country, City, Industry, Has Designer (Y/N), Designer Titles Found, Funded (Y/N), Source, Notes, Design Score (1-10), Design Quality (Good/Fair/Poor), Design Notes, Screenshot URL
 ```
 
 Field definitions:
@@ -84,6 +84,43 @@ Field definitions:
 - **Source** — which portfolio site (Founders Factory, Seedcamp, EF, BGV)
 - **Notes** — anything relevant (e.g. 'no designer', 'email not public',
   'source: WebSearch', etc.)
+- **Design Score (1-10)** — rating of the company's website/product design
+  (1 = poor, 10 = excellent), from the Design Analysis Step below
+- **Design Quality (Good/Fair/Poor)** — bucketed version of the score
+  (Good = 8-10, Fair = 5-7, Poor = 1-4)
+- **Design Notes** — brief feedback (e.g. 'modern layout, good contrast',
+  'outdated typography', 'mobile not optimized')
+- **Screenshot URL** — GitHub link to the saved screenshot:
+  `https://github.com/designbizkot/jennie-bizdev/blob/[branch]/screenshots/[company-slug].png`
+
+## Design Analysis Step
+
+For each company, after gathering contact/company info:
+
+1. **Install Playwright once** (if not already installed):
+   ```bash
+   npm install playwright
+   npx playwright install chromium
+   ```
+2. **Screenshot** the company's main product/homepage using Playwright.
+3. **Analyze** the screenshot using vision to assess:
+   - Visual hierarchy & layout clarity
+   - Typography & readability
+   - Color scheme & contrast
+   - Mobile responsiveness signals
+   - Overall polish & professionalism
+   - Modern design patterns vs. outdated aesthetics
+4. **Rate** the design 1-10 and give brief feedback (Design Notes).
+5. **Save** the screenshot to `screenshots/[company-slug].png`.
+   - Naming: `company-slug.png` (e.g. `revolut.png`). If two companies
+     share a slug, disambiguate: `fabric-fintech.png`, `fabric-fashion.png`.
+6. **Link** the screenshot in the CSV's Screenshot URL column using the
+   GitHub blob URL format above.
+
+This step requires working outbound network/browser access. If Playwright
+cannot reach a company's site (proxy/network error), leave the Design
+Score/Quality/Notes/Screenshot URL fields blank and note the failure
+reason in Notes rather than fabricating a rating.
 
 ### Weekly email (every run — manual test or scheduled Sunday routine)
 
