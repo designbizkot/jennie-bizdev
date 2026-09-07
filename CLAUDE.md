@@ -16,53 +16,42 @@ Visit these accelerator/VC portfolio sites and find portfolio companies:
 - Only UK-based startups (Country = United Kingdom)
 - Only Fintech or Edtech industries
 
-## Fields to populate
-
-For each company found, research and populate all fields:
-
-1. **Company Name** — exact legal company name
-2. **First Name** — of a target BD/design contact (founder, Product Lead,
-   or Design Lead preferred)
-3. **Last Name** — of that contact
-4. **Job Title** — their current role/title
-5. **LinkedIn URL** — direct link to their LinkedIn profile
-6. **Email** — their work email (if publicly listed)
-7. **Country** — must be `United Kingdom`
-8. **City** — where the company is based
-9. **Industry** — must be `Fintech` or `Edtech`
-10. **Funded (Y/N)** — whether they have received funding
+For each company found, research and populate all fields listed in the
+Output section below.
 
 ## Research methodology (in priority order)
 
 1. **Company website** — About, Team, `/team`, `/leadership`, `/people`
-   pages for names and titles
-2. **Crunchbase** — founder names, funding info, location
-3. **AngelList/Wellfound** — team profiles, founder bios
+   pages for:
+   - First/Last Name of founder, CEO, or Design/Product lead
+   - Job Title of that person
+   - LinkedIn URL (check if linked from their bio/profile)
+   - Work Email (if publicly listed)
+   - Company name, website, location (country/city)
+   - Industry classification
+   - Any design titles on team page (Product Designer, UX/UI Designer,
+     etc.)
+2. **Crunchbase** — search company name for:
+   - Founder names and titles
+   - Funding status and date
+   - Company location
+3. **AngelList/Wellfound** — team profiles, founder bios, funding info
 4. **WebSearch** — `'[Company Name]' + 'founder'`,
    `'[Company Name]' + 'funding'`, `'[Company Name]' + 'team'`
-5. **GitHub** — company org profile for founder/team member names
-6. **Twitter** — company or founder bio for full names
-7. **Email inference** — if you have first name + company domain, suggest
-   likely format (firstname@company.com) and flag as 'inferred' in
-   Source Notes
+   - Extract founder/leader names from news, press releases,
+     announcements
+5. **GitHub** — company org or founder GitHub profile for names
+6. **Twitter** — company or founder Twitter/X bio for full names and
+   titles
+7. **LinkedIn search** — if you find a LinkedIn profile URL in search
+   results, use it
+8. **Email inference** — if you have first name + company domain, suggest
+   format (firstname@company.com, first.last@company.com) and flag as
+   'inferred' in Notes
 
-**Rule:** Never guess or leave a field blank without noting why. If data
-is unavailable, leave blank and note in Source Notes ('founder name not
-public', 'email not published', 'industry unclear', etc.).
-
-## Fallback research sources
-
-If primary sources don't have enough data, use these:
-
-- Startupbootcamp.org
-- Techstars.com
-- Plug-and-play.tech
-- Crunchbase.com
-- Beauhurst.com
-- Seedtable.com
-- Angel.co
-- Wellfound.com
-- Firmbase.co
+**Rule:** Never guess or fabricate a name, email, or LinkedIn URL. If a
+field cannot be found, leave it blank and note the reason in Notes
+('email not public', 'founder name not listed', etc.).
 
 ## Output
 
@@ -70,24 +59,43 @@ Save results to `leads.csv` (append new rows on each run) with these
 columns:
 
 ```
-Company Name, First Name, Last Name, Job Title, LinkedIn URL, Email, Country, City, Industry, Funded (Y/N), Source Notes
+First Name, Last Name, Job Title, LinkedIn URL, Email, Company Name, Company Website, Country, City, Industry, Has Designer (Y/N), Designer Titles Found, Funded (Y/N), Source, Notes
 ```
 
-- **Source Notes**: Where the data came from (company site, Crunchbase,
-  WebSearch, inferred, etc.) + confidence level (direct/high-confidence,
-  research-based, low-confidence).
+Field definitions:
 
-### Weekly email (Sunday routine)
+- **First Name** — first name of target contact (founder, CEO, Product
+  Lead, Design Lead)
+- **Last Name** — last name of that contact
+- **Job Title** — their role/title (e.g. CEO, CTO, Head of Product,
+  Product Designer)
+- **LinkedIn URL** — direct link to their LinkedIn profile
+- **Email** — their work email
+- **Company Name** — exact company name
+- **Company Website** — company's main website
+- **Country** — `United Kingdom`
+- **City** — company location
+- **Industry** — `Fintech` or `Edtech`
+- **Has Designer (Y/N)** — Y if Product/UX/UI/Design title found on team
+  page; N if not
+- **Designer Titles Found** — semicolon-separated list of exact design
+  titles (empty if none)
+- **Funded (Y/N)** — Y/N based on research
+- **Source** — which portfolio site (Founders Factory, Seedcamp, EF, BGV)
+- **Notes** — anything relevant (e.g. 'no designer', 'email not public',
+  'source: WebSearch', etc.)
 
-Send an email to design@bizkitgroup.com with:
+### Weekly email (every run — manual test or scheduled Sunday routine)
 
-- **To**: design@bizkitgroup.com
-- **Subject**: Bizkit Weekly BD Leads — [Date]
-- **Body format**:
-  - GitHub commit link at top
+After every run, send an email to design@bizkitgroup.com with:
+
+- **Subject**: Bizkit Weekly BD Leads — [Date of run]
+- **Email body**:
+  - GitHub commit link and hash at top
   - Summary: X new companies added, breakdown by source (Founders
     Factory, Seedcamp, EF, BGV)
   - Any blockers or flagged issues (only if relevant)
   - All text as bullets, max 1–2 lines per point
-- **Attachment**: leads.csv as a real downloadable .csv file (not a
-  link, not pasted text)
+- **Attachment**: Attach the `leads.csv` file as an actual downloadable
+  .csv file attachment (not a link, not pasted text). The Gmail
+  connector supports file attachments — attach it directly.
