@@ -15,79 +15,106 @@ potential leads, and research each one:
 For each portfolio company found:
 
 1. Visit the company's website.
-2. Check the team/about page for job titles containing "Product Designer",
-   "UX Designer", "UI Designer", "UX/UI Designer", or similar design titles.
-3. Try to find a screenshot-able view of their product UI (app screenshot,
-   dashboard preview, product demo page, etc.) on their site and save it as
-   an image file in `screenshots/` (filename: `<company-slug>.png`).
-4. Try to identify one BD outreach contact at the company — ideally someone
-   in a Product, Design, or Founder/CEO role — via the company's own
-   website (team/about pages), a LinkedIn search, or as a last resort
-   WebSearch results. Leave the contact fields blank rather than guessing
-   if no reliable person can be found.
-5. Record a row in the output CSV.
+2. Check the team/about page for a design-related role — job titles
+   containing "Product Designer", "UX Designer", "UI Designer",
+   "UX/UI Designer", "Head of Design", or similar. This is the target
+   contact for BD outreach; if no such role is identifiable, fall back to
+   the most senior design-adjacent contact you can find (e.g. a
+   Founder/CEO at a very early-stage company).
+3. For that contact, try to find: First Name, Last Name, Job Title,
+   LinkedIn URL, Email (only if publicly listed — never guess or
+   construct one from a name/domain pattern).
+4. For the company, try to find: Country, City (HQ location), Industry,
+   and Funded (Y/N) status (per its site, Crunchbase, press, etc.).
+5. Record a row in the output CSV. Leave any field blank rather than
+   guessing if reliable info isn't found — log the company anyway with
+   what you do have, noting the gap in `Source Notes`.
 
 ## Output
 
 Save results to `leads.csv` (append new findings on each run rather than
-overwriting past results, unless asked to start fresh) with these columns:
+overwriting past results, unless asked to start fresh) with exactly these
+columns:
 
 ```
-Company, Website, Source, Has Designer (Y/N), Designer Titles Found, Screenshot Saved (Y/N), Notes, Date Found, Founded, Funded (Y/N), Funding Date, Design Quality, Product Image, First Name, Last Name, Job Title, LinkedIn URL, Email, Country, City, Company Name
+Company Name, First Name, Last Name, Job Title, LinkedIn URL, Email, Country, City, Industry, Funded (Y/N), Source Notes
 ```
 
-- `Source`: which of the 4 sites the lead was found on.
-- `Has Designer`: Y/N based on whether a Product/UX/UI Designer title was
-  found on the team/about page.
-- `Designer Titles Found`: semicolon-separated list of exact titles found
-  (empty if none).
-- `Screenshot Saved`: Y/N — Y only if a screenshot file was actually saved
-  to `screenshots/`.
-- `Notes`: anything relevant — e.g. "no team page found", "site down",
-  "team page requires login", etc.
-- `Date Found`: date the row was researched (YYYY-MM-DD).
-- `Founded`: the year (or full date, if known) the company was founded.
-  Leave blank rather than guessing if not findable.
-- `Funded`: Y/N — whether the company has received any funding (per its
-  site, Crunchbase, press, etc.).
-- `Funding Date`: when they received (most recent) funding, if known.
-  Leave blank if unknown or if `Funded` is N.
-- `Design Quality`: your own judgment on whether the product/website UI
-  looks weak — e.g. "outdated, cluttered layout, no real product
-  screenshots". Leave blank if the UI looks solid or you couldn't assess it;
-  only fill this in to flag a weakness (this is a lead-quality signal for
-  BD, not a full design critique).
-- `Product Image`: a direct URL to a product screenshot/image found on the
-  company's site — something that can be pasted straight into a browser to
-  view the image itself (not a page URL, not a local file path). Leave
-  blank if no direct image URL is available; never guess or construct one.
-- `First Name` / `Last Name`: name of one BD outreach contact at the
-  company — prefer someone in Product, Design, or a Founder/CEO role.
-  Leave both blank if no reliable person can be identified.
+- `Company Name`: the company name.
+- `First Name` / `Last Name`: name of the target contact identified in
+  step 2 above. Leave both blank if no reliable person can be identified.
 - `Job Title`: that contact's job title, as found.
 - `LinkedIn URL`: that contact's LinkedIn profile URL, if found.
 - `Email`: that contact's email address, only if found directly (e.g.
   listed on the company site) — never guess or construct an email from a
   name/domain pattern.
-- `Country` / `City`: that contact's (or the company's HQ, if the
-  individual's location isn't known) location, if found.
-- `Company Name`: the company name again, for context alongside the
-  contact fields.
-- For all contact fields: leave blank rather than guessing if reliable
-  info isn't found. In `Notes`, flag whether the contact info came from
-  the company's own site, LinkedIn, or WebSearch, so confidence can be
-  judged at a glance.
+- `Country` / `City`: the contact's location if known, otherwise the
+  company's HQ location.
+- `Industry`: a brief descriptor (e.g. "Fintech", "HealthTech", "AI/ML").
+- `Funded (Y/N)`: whether the company has received any funding.
+- `Source Notes`: where this row's data came from and how confident it
+  is — e.g. "direct site research", "WebSearch fallback (site
+  unreachable)", "low confidence — ambiguous name match", "no design
+  contact identifiable". Always fill this in; it's the main way to judge
+  data quality at a glance since there's no separate confidence column.
+
+Do not include any other columns (no Website, Source, Has Designer,
+Screenshot Saved, Notes, Date Found, Founded, Funding Date, Design
+Quality, or Product Image — this schema replaced all of those).
 
 ## Tools / approach
 
-- Use WebFetch to pull page content and identify team/about pages and
-  product screenshots.
-- Use a headless browser (Playwright via Bash, Chromium is pre-installed at
-  `/opt/pw-browsers/chromium`) to capture actual screenshots when WebFetch
-  alone isn't enough (e.g. to render and screenshot a product page).
-- Don't spend excessive time on any single company — if a team page or
-  product screenshot isn't findable in a reasonable effort, note that in
-  `Notes` and move on.
+- Use WebFetch to pull page content and identify team/about pages.
+- Use WebSearch as a fallback when direct site access fails (this has
+  happened before — some company domains get blocked by network egress
+  policy in this environment) to find designer-title and contact signals.
+  Note the fallback explicitly in `Source Notes` when used.
+- Don't spend excessive time on any single company — if a contact isn't
+  findable in a reasonable effort, log the company with blank contact
+  fields and a note in `Source Notes`, then move on.
 - This is a recurring task — re-run periodically to catch new portfolio
   additions. Avoid duplicate rows for companies already logged in
-  `leads.csv` (check first, only add new companies or updates).
+  `leads.csv` (check `Company Name` first, only add new companies or
+  updates to existing ones).
+
+## Weekly email (Sunday routine)
+
+After committing and pushing `leads.csv` (and any other changes), send an
+email to design@bizkitgroup.com via the Gmail connector, structured exactly
+like this:
+
+```
+Subject: Bizkit BD Lead Sourcing — <date>
+
+GitHub Commit
+[Link to branch] | Commit: [short commit hash]
+
+Summary
+• X new companies added (Y total)
+• Z with confirmed contact info
+• [Any major blockers or gaps this run]
+
+Breakdown by Source
+• Founders Factory: X companies
+• Seedcamp: X companies
+• Entrepreneur First: X companies
+• Bethnal Green Ventures: X companies
+
+Flagged Issues (if any — only include this section if there are problems)
+• [Issue 1: brief explanation]
+• [Issue 2: brief explanation]
+
+Attachment: leads.csv (the actual file)
+```
+
+- Keep every bullet to 1–2 lines — no long explanations in the body.
+- The branch link is
+  `https://github.com/designbizkot/jennie-bizdev/tree/claude/bizkit-designer-leads-ggcih0`;
+  prefer linking the specific commit just pushed
+  (`https://github.com/designbizkot/jennie-bizdev/commit/<sha>`) when you
+  have the SHA.
+- **Attach the actual current `leads.csv` file** (full file, all rows, not
+  just this run's new ones) as a real CSV attachment on the email — not a
+  pasted table, not a link only. The recipient needs to download and open
+  it directly from the email.
+- Omit the "Flagged Issues" section entirely if there's nothing to flag.
