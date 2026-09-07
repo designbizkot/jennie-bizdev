@@ -18,15 +18,48 @@ sources below. If a company doesn't match — wrong country, or an industry
 outside Fintech/Edtech — **do not add it to `leads.csv`**. This applies
 to new runs and to any backfill/cleanup of existing rows.
 
-## Sources
+## Sources: two-tier approach
 
-Visit these accelerator/VC portfolio sites, find companies that look like
-potential leads:
+**Tier 1 — Primary sources.** Work these first, every run:
 
-- https://www.joinef.com/
-- https://foundersfactory.com/
-- https://www.bethnalgreenventures.com/portfolio
-- https://seedcamp.com/
+- https://www.joinef.com/ (Entrepreneur First)
+- https://foundersfactory.com/ (Founders Factory)
+- https://www.bethnalgreenventures.com/portfolio (Bethnal Green Ventures)
+- https://seedcamp.com/ (Seedcamp)
+
+Find portfolio companies here, apply the scope filter, and try to fill
+the 8 required fields directly from what these sources surface (portfolio
+descriptions, linked company sites, etc.).
+
+**Tier 2 — Fallback sources.** Use these when a company passes the scope
+filter but Tier 1 didn't yield full contact info (no named person, no
+LinkedIn/email, industry/location unclear). Only 9 fallback sources are
+currently confirmed/approved — do not invent additional ones:
+
+- *Accelerators & Incubators*: startupbootcamp.org, techstars.com,
+  plug-and-play.tech — check if the company also appears in one of these
+  programs' own portfolio/alumni listings (sometimes surfaces a founder
+  bio or team page Tier 1 didn't have).
+- *VC firms & investment platforms*: crunchbase.com, beauhurst.com,
+  seedtable.com, angel.co, wellfound.com — company profile pages here
+  often list founders, funding rounds, HQ location, and industry tags
+  directly.
+- *Startup directories & company lists*: firmbase.co — curated UK company
+  listings, sometimes with contact/industry data Tier 1 lacks.
+
+**How this actually works technically:** this environment's network
+egress is restricted, and in practice almost all direct site fetches
+(Tier 1 and Tier 2 domains alike) get blocked except the Tier 1 portfolio
+root pages. The real mechanism that works is **WebSearch** — searching
+`"[Company Name]" founder`, `"[Company Name]" funding`, etc. surfaces
+indexed results *from* Crunchbase, Wellfound, press coverage, and the
+other Tier 2 sources without needing a direct fetch to succeed. So "use
+Crunchbase as a fallback" in practice means "WebSearch queries that
+surface Crunchbase's indexed company data," not necessarily a direct
+crunchbase.com fetch. Note in `Source Notes` which underlying source the
+information actually came from (e.g. "via WebSearch, Crunchbase listing"),
+since that's what determines confidence, not which tier it's nominally
+from.
 
 ## The 8 required fields
 
@@ -64,29 +97,41 @@ log what you have and note what's missing (see "Incomplete rows" below).
 
 Work through these in order for each company; stop as soon as you have
 enough to fill the 8 fields, but don't stop after step 1 if fields are
-still missing — keep going down the list.
+still missing — keep going down the list. Steps 1 is Tier 1; steps 2-6 are
+Tier 2 fallback, used via WebSearch as described above.
 
-1. **Company's own website** — About, Team, `/team`, `/leadership`,
-   `/people` pages. Look for names + titles of founders or Product/Design
-   leads.
-2. **Crunchbase** — search by company name; pull founder names, funding
-   info, HQ location.
-3. **AngelList / Wellfound** — team profiles, founder bios.
-4. **News/press** — WebSearch `"[Company Name]" founder`,
-   `"[Company Name]" funding`, TechCrunch, UKTN, sector press (e.g.
-   FinTech Wales, EdTech coverage). Extract names and titles from
-   announcements.
+1. **Company's own website** (Tier 1 first) — About, Team, `/team`,
+   `/leadership`, `/people` pages. Look for names + titles of founders or
+   Product/Design leads.
+2. **Crunchbase** (Tier 2) — search by company name; pull founder names,
+   funding info, HQ location. Example: `"Acme Ltd" site:crunchbase.com`
+   or `"Acme Ltd" crunchbase founder`.
+3. **AngelList / Wellfound** (Tier 2) — team profiles, founder bios.
+   Example: `"Acme Ltd" wellfound team` — often surfaces a founder's job
+   title directly from their team-page listing.
+4. **News/press** (Tier 2, plus general web) — WebSearch
+   `"[Company Name]" founder`, `"[Company Name]" funding`, TechCrunch,
+   UKTN, sector press (e.g. FinTech Wales, EdTech coverage), and
+   beauhurst.com / seedtable.com / firmbase.co rankings and curated lists.
+   Extract names and titles from funding announcements — these are
+   usually the richest source for founder names on early-stage companies.
 5. **GitHub** — search for the company's GitHub org; find founder/team
    member profiles with real names (most useful for more technical
    fintech/edtech products).
 6. **Twitter/X** — search `"[Company Name]"` or `"[Founder Name]"`, check
    company/founder bios for full names and location hints.
-7. **Email inference** — if you have a first name and a confirmed company
+7. **Job postings** (Tier 2, via startupbootcamp.org / techstars.com /
+   plug-and-play.tech alumni listings, or general job-board WebSearch) —
+   a current job ad ("reporting to our Head of Design, Jane Smith...")
+   can reveal team structure and titles even when there's no formal team
+   page. Example: `"Acme Ltd" hiring job description` to surface listings
+   that name existing team members.
+8. **Email inference** — if you have a first name and a confirmed company
    domain, you may suggest a likely-format email (`firstname@company.com`,
    `first.last@company.com`, etc.), but you **must** flag it explicitly as
    `inferred` in `Source Notes` (e.g. "Email inferred from name + domain
    pattern, not verified"). Never present an inferred email as confirmed.
-8. **LinkedIn URLs surfaced in search results** — if a LinkedIn profile
+9. **LinkedIn URLs surfaced in search results** — if a LinkedIn profile
    URL appears in WebSearch results or on the company's own pages, capture
    it directly rather than re-deriving it.
 
@@ -145,15 +190,20 @@ Quality, or Product Image — this schema replaced all of those).
 
 ## Tools / approach
 
-- Use WebFetch to pull page content and identify team/about pages.
-- Use WebSearch, Crunchbase, AngelList/Wellfound, GitHub, and Twitter/X
-  as primary research sources (not just the company's own website) — this
-  has become the default approach, not just a fallback, per the
-  methodology above.
-- Direct site access can be blocked by network egress policy in this
-  environment (has happened before) — when that happens, rely on
-  WebSearch and the other sources above, and note the fallback explicitly
-  in `Source Notes`.
+- Use WebFetch first on Tier 1 portfolio pages to identify companies and
+  team/about pages.
+- For contact enrichment, use WebSearch as the primary mechanism — it
+  reaches Crunchbase, Wellfound, news/press, and the other Tier 2 sources
+  via indexed search results even when a direct fetch to that domain
+  would be blocked. GitHub and Twitter/X search are also fair game.
+- Direct site access (Tier 1 or Tier 2) can be blocked by network egress
+  policy in this environment (has happened repeatedly) — when that
+  happens, rely on WebSearch and note the fallback explicitly in
+  `Source Notes`, including which underlying source (e.g. Crunchbase,
+  a press article) the WebSearch result actually came from.
+- Only use the 9 confirmed Tier 2 fallback sources listed above — don't
+  invent or assume additional "approved" sources beyond these plus
+  WebSearch/GitHub/Twitter.
 - This is a recurring task — re-run periodically to catch new portfolio
   additions. Avoid duplicate rows for companies already logged in
   `leads.csv` (check `Company Name` first, only add new companies or
