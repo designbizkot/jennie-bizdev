@@ -97,28 +97,42 @@ Field definitions:
 
 For each company, after gathering contact/company info:
 
-1. **Install Playwright once** (if not already installed):
+1. **Screenshot** the company's main homepage using thum.io (no signup/API
+   key required, 1,000 free screenshots/month):
    ```bash
-   npm install playwright
-   npx playwright install chromium
+   curl -sS -L "https://image.thum.io/get/https://COMPANY-DOMAIN/" -o screenshots/company-slug.png
    ```
-2. **Screenshot** the company's main product/homepage using Playwright.
-3. **Analyze** the screenshot using vision to assess:
+   - thum.io needs ~10-15s to render an uncached URL. A too-fast fetch
+     returns an animated placeholder GIF instead of the real PNG — check
+     the file (`file screenshots/company-slug.png` should say `PNG`, not
+     `GIF`), and if it's a GIF, wait ~15s and re-fetch.
+   - Verify the company's exact domain before requesting the screenshot
+     (don't guess — confirm from prior research) to avoid capturing the
+     wrong site.
+   - Free tier renders at a fixed ~600x600 viewport with no full-page
+     capture — that's expected, not a failure.
+   - Some pages will be mostly obscured by a cookie-consent modal (no way
+     to dismiss it without a real browser). Note this in Design Notes
+     rather than treating it as a capture failure, and score only what's
+     visible.
+2. **Analyze** the screenshot using vision to assess:
    - Visual hierarchy & layout clarity
    - Typography & readability
    - Color scheme & contrast
    - Mobile responsiveness signals
    - Overall polish & professionalism
    - Modern design patterns vs. outdated aesthetics
-4. **Rate** the design 1-10 and give brief feedback (Design Notes).
-5. **Save** the screenshot to `screenshots/[company-slug].png`.
+3. **Rate** the design 1-10 and give brief feedback (Design Notes).
+4. **Save** the screenshot to `screenshots/[company-slug].png`.
    - Naming: `company-slug.png` (e.g. `revolut.png`). If two companies
      share a slug, disambiguate: `fabric-fintech.png`, `fabric-fashion.png`.
-6. **Link** the screenshot in the CSV's Screenshot URL column using the
+5. **Link** the screenshot in the CSV's Screenshot URL column using the
    GitHub blob URL format above.
 
-This step requires working outbound network/browser access. If Playwright
-cannot reach a company's site (proxy/network error), leave the Design
+This step requires working outbound network access (confirmed working via
+curl/WebFetch in this environment — Playwright/Chromium is not, due to a
+proxy issue with the browser's connection pattern, so don't use it here).
+If thum.io cannot reach a company's site, leave the Design
 Score/Quality/Notes/Screenshot URL fields blank and note the failure
 reason in Notes rather than fabricating a rating.
 
