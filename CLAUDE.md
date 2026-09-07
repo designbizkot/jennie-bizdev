@@ -77,13 +77,17 @@ Company Name, First Name, Last Name, Job Title, LinkedIn URL, Email, Country, Ci
   WebSearch, inferred, etc.) + confidence level (direct/high-confidence,
   research-based, low-confidence).
 
-## Weekly email (Sunday routine)
+### Weekly email (Sunday routine)
 
-Send email to design@bizkitgroup.com with:
+Send an email to design@bizkitgroup.com with:
 
-- GitHub commit link at the top
-- Summary: # new companies added, # from each source, any blockers
-- Breakdown by source (Founders Factory, Seedcamp, EF, BGV)
-- Flagged issues (only if relevant)
-- All bullets, max 1–2 lines each
-- Attach leads.csv as a downloadable .csv file (not a link)
+- **To**: design@bizkitgroup.com
+- **Subject**: Bizkit Weekly BD Leads — [Date]
+- **Body format**:
+  - GitHub commit link at top
+  - Summary: X new companies added, breakdown by source (Founders
+    Factory, Seedcamp, EF, BGV)
+  - Any blockers or flagged issues (only if relevant)
+  - All text as bullets, max 1–2 lines per point
+- **Attachment**: leads.csv as a real downloadable .csv file (not a
+  link, not pasted text)
