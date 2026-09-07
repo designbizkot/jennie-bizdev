@@ -55,3 +55,26 @@ Company, Website, Source, Has Designer (Y/N), Designer Titles Found, Screenshot 
 - This is a recurring task — re-run periodically to catch new portfolio
   additions. Avoid duplicate rows for companies already logged in
   `leads.csv` (check first, only add new companies or updates).
+
+## Weekly email (Sunday routine)
+
+After committing and pushing `leads.csv`, send a summary email using the
+Gmail connector, to design@bizkitgroup.com, every time this task runs:
+
+- **Subject**: `Jennie BD Leads — <Date, e.g. 7 Sep 2026>`
+- **Body**:
+  1. A link to the GitHub commit (or branch/PR if one was opened) with this
+     run's changes.
+  2. A brief summary: how many new companies were researched this run, how
+     many had a confirmed designer title, how many screenshots were saved.
+  3. A breakdown by source (EF / Founders Factory / BGV / Seedcamp): rows
+     added per source.
+  4. Optional: any flagged issues worth a human's attention — e.g. a source
+     site that was unreachable, a run that had to fall back to WebSearch,
+     network/tooling problems, or anything else that limited coverage this
+     run.
+- **Attachment**: the current full `leads.csv`, attached as a real
+  downloadable CSV file (not a link, not a pasted table).
+
+If sending the email fails (e.g. connector unavailable), note that in the
+task's final summary rather than silently skipping it.
